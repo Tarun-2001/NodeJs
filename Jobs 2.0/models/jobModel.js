@@ -22,6 +22,19 @@ const jobSchema = new mongoose.Schema(
       ref: "userModel",
       required: [true, "Please provide user"],
     },
+    lastName:{
+      type:String,
+      maxlength:50,
+      minlength:3,
+      trim:true,
+      default:'LastName'
+    },
+    location:{
+      type:String,
+      maxlength:50,
+      trim:true,
+      default:'Hyderabad'
+    }
   },
   { timestamps: true }
 );
