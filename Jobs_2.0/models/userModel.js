@@ -22,6 +22,19 @@ const userSchema = new mognoose.Schema({
     type: String,
     required: [true, "Please provide password"],
   },
+  lastName:{
+    type:String,
+    maxlength:50,
+    minlength:3,
+    trim:true,
+    default:'LastName'
+  },
+  location:{
+    type:String,
+    maxlength:50,
+    trim:true,
+    default:'Hyderabad'
+  }
 });
 
 userSchema.pre("save", async function () {

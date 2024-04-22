@@ -3,6 +3,8 @@ const BadRequest = require("../errors/BadRequest");
 const user = require("../models/userModel");
 const Unauthenticated = require("../errors/Unaunthenticated");
 const generateToke = require("../middleware/tokengeneration");
+const userModel = require("../models/userModel");
+const { STATES } = require("mongoose");
 
 const login = async (req, res, next) => {
   try {
@@ -29,4 +31,25 @@ const register = async (req, res, next) => {
   }
 };
 
-module.exports = { login, register };
+const updateUser = async (req, res, next) => {
+  try {
+    const { name, email, location, lastName } = req.body;
+    if (!name || !email || !location || !lastName)
+      throw new BadRequest("Enter all details ");
+    const existingUser = await user.findOne({ _id: req.user });
+    existingUser.email = email;
+    existingUser.location = location;
+    existingUser.name = name;
+    existingUser.lastName = lastName;
+
+    const result = await existingUser.save();
+    if (!result)
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ Message: "Failed to update details please try again!!" });
+    res.status(StatusCodes.OK).json({ Message: "Details updated sucessfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports = { login, register,updateUser };
