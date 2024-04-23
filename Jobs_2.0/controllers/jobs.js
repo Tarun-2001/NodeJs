@@ -4,18 +4,45 @@ const NotFound = require("../errors/NotFound");
 const MetaError = require("../errors/MetaError");
 const asyncWrapper = require("../middleware/asyncWrapper");
 
-const getAllJobs = asyncWrapper(async (req, res, next) => {
-  const allJobs = await JobModel.find({ createdBy: req.user }).sort(
-    "createdBy"
-  );
+const getAllJobs = asyncWrapper(async (req, res) => {
+  const searchObject = {
+    createdBy: req.user,
+  };
+  if (req.query.search)
+    searchObject.position = { $regex: req.query.search, $options: "i" };
+  if (req.query.status && req.query.status !== "all")
+    searchObject.status = req.query.status;
+  if (req.query.jobType) searchObject.jobType = req.query.jobType;
+
+  const result = await JobModel.find(searchObject);
+  const totalJobs = result.length
+  if (req.query.sort === "latest") result = result.sort("-createdAt");
+  if (req.query.sort === "oldest") result = result.sort("createdAt");
+  if (req.query.sort === "a-z") result = result.sort("position");
+  if (req.query.sort === "z-a") result = result.sort("-position");
+
+
+
+  const { page, limit, skip } = req.query;
+  const flag = false;
+  if (page && limit) flag = true;
+
+  if (page) page = page || 1;
+  if (limit) limit = limit || 10;
+  if (flag) {
+    skip = (page - 1) * limit;
+    result = result.skip(skip).limit(limit);
+  }
+  
+  const allJobs = result;
   res.status(StatusCodes.OK).json({
     Message: "Jobs fetched sucessfully",
-    count: allJobs.length,
+    count: totalJobs,
     allJobs,
   });
 });
 
-const getJob = asyncWrapper(async (req, res, next) => {
+const getJob = asyncWrapper(async (req, res) => {
   const { id } = req.params;
   const myJob = await JobModel.findOne({ _id: id, createdBy: req.user });
   if (!myJob) throw new NotFound("No job is found with given id");
@@ -24,7 +51,7 @@ const getJob = asyncWrapper(async (req, res, next) => {
     .json({ Message: "Job fetched successfully", Job: myJob });
 });
 
-const createJob = asyncWrapper(async (req, res, next) => {
+const createJob = asyncWrapper(async (req, res) => {
   const obj = { ...req.body };
   obj.createdBy = req.user;
   const result = await JobModel.create(obj);
@@ -33,7 +60,7 @@ const createJob = asyncWrapper(async (req, res, next) => {
     .json({ Status: "Job created sucessfully", result });
 });
 
-const updateJob = asyncWrapper(async (req, res, next) => {
+const updateJob = asyncWrapper(async (req, res) => {
   const { id } = req.params;
   const updateJob = await JobModel.findOneAndUpdate(
     { _id: id, createdBy: req.user },

@@ -1,6 +1,7 @@
 const asyncWrapper = (handler) => {
-  return (req, res, next) => {
-    handler(req, res, next).catch((error) => {
+  return async (req, res, next) => {
+    await handler(req, res, next).catch((error) => {
+      console.log(error)
       next(error);
     });
   };

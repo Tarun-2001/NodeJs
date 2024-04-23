@@ -22,6 +22,13 @@ const jobSchema = new mongoose.Schema(
       ref: "userModel",
       required: [true, "Please provide user"],
     },
+    jobType:{
+      type:String,
+      default:"Contract",
+      trim:true,
+      maxlength:50,
+      minlength:3
+    }
   },
   { timestamps: true }
 );
