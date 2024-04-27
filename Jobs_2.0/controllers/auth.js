@@ -6,6 +6,7 @@ const generateToke = require("../middleware/tokengeneration");
 const userModel = require("../models/userModel");
 const { STATES } = require("mongoose");
 const asyncWrapper = require("../middleware/asyncWrapper");
+const MetaError = require('../errors/MetaError')
 
 const login = asyncWrapper(async (req, res, next) => {
   const { email, password } = req.body;
@@ -19,6 +20,9 @@ const login = asyncWrapper(async (req, res, next) => {
   res.status(StatusCodes.OK).json({ users, token });
 });
 const register = asyncWrapper(async (req, res, next) => {
+  const {email} = req.body
+  let checkUser = user.findOne({email})
+  if(!checkUser) throw new MetaError.BadRequest('User already exist')
   const register = await user.create({ ...req.body });
   const token = register.createJWT();
   res.status(StatusCodes.CREATED).json({ user, token });

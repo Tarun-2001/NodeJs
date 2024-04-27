@@ -52,7 +52,7 @@ const getJob = asyncWrapper(async (req, res) => {
 });
 
 const createJob = asyncWrapper(async (req, res) => {
-  const obj = { ...req.body };
+  const obj = { ...req.body }; // spread operation - Hallow copy 
   obj.createdBy = req.user;
   const result = await JobModel.create(obj);
   res
