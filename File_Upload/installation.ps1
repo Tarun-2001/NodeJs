@@ -14,6 +14,7 @@ npm i dotenv
 npm i express-async-handler
 npm i nodemon
 npm i express-fileupload
+npm i cloudinary
 # Run below command 
 
 # ./installations.ps1 - Run this command to install all dependencies

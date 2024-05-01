@@ -1,5 +1,7 @@
 const express = require('express')
-const { getAllProducts, uploadProductImage } = require('../controllers/productController')
+const { getAllProducts} = require('../controllers/productController')
+const { uploadProductImageLocal,uploadProductImage } = require('../controllers/uploadController')
+
 
 const router = express.Router()
 router.get('/getProduct',getAllProducts)
