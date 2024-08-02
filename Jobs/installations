@@ -1,0 +1,14 @@
+npm i express
+npm i nodemon
+npm i mongoose
+npm i dotenv
+npm i http-status-codes
+npm i bcrypt
+npm i jsonwebtoken
+npm i helmet - used to prevent http headers sent by express app
+npm i cors (cross origin resource sharing ) - used to access the domin from the different domin
+npm i xss-clean - security library 
+npm i express-rate-limit
+
+
+Refer package.json for more information
